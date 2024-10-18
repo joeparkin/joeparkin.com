@@ -4,8 +4,7 @@ $(document).ready(function() {
     var w = $("#canvas").width();
     var h = $("#canvas").height();
     var cs = 10; 			// cell size
-    var cellshigh = h/cs; 	// how many cells
-//high the canvas is
+    var cellshigh = h/cs; 	// how many cells high the canvas is
     var cellswide = w/cs;	// how many cells wide the canvas is
     var delay = 100;		// time in ms between iterations
     var iteration = 0;		// number of iterations computed
@@ -63,7 +62,7 @@ $(document).ready(function() {
         }
     }
     
-    // I have to include this because javascript ***REMOVED***thinks it's okay to redefine mathematics.
+    // I have to include this because javascript thinks it's okay to redefine mathematics.
     function mod( n, m ) {
         return (( m % n ) + n ) % n;
     }
@@ -113,7 +112,7 @@ $(document).ready(function() {
     
     function init() {
         if( typeof game_loop != "undefined" ) clearInterval( game_loop );
-        game_loop = setInterval( paint, delay ); // run paint function every 500ms
+        game_loop = setInterval( paint, delay ); // run paint function every delay ms
     }
     init();
     
