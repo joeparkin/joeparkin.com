@@ -5,16 +5,21 @@ const ctx = canvas.getContext('2d');
 const GLIDER = [[0, 0], [1, 0], [2, 0], [2, 1], [1, 2]];
 const RPENTOMINO = [[1, 0], [2, 0], [0, 1], [1, 1], [1, 2]];
 const SPACESHIP = [[1, 0], [4, 0], [0, 1], [0, 2], [4, 2], [0, 3], [1, 3], [2, 3], [3, 3]];
+const TOAD = [[1, 0], [1, 1], [1, 2], [2, 1], [2, 2], [2, 3]];
+const BEACON = [[0, 0], [0, 1], [1, 0], [2, 3], [3, 2], [3, 3]];
 const GLIDERGUN = [
   [24, 0], [22, 1], [24, 1], [12, 2], [13, 2], [20, 2], [21, 2], [34, 2], [35, 2], 
   [11, 3], [15, 3], [20, 3], [21, 3], [34, 3], [35, 3], [0, 4], [1, 4], [10, 4], 
   [16, 4], [20, 4], [21, 4], [0, 5], [1, 5], [10, 5], [14, 5], [16, 5], [17, 5], 
   [22, 5], [24, 5], [10, 6], [16, 6], [24, 6], [11, 7], [15, 7], [12, 8], [13, 8]
 ];
-
+const PENTADECATHLON = [[2,0],[7,0],
+  [0,1],[1,1],[3,1],[4,1],[5,1],[6,1],[8,1],[9,1],
+  [2,2],[7,2]
+];
 let delay = 100;
-let width = 800;
-let height = 800;
+let width = document.getElementById('canvas').width;
+let height = document.getElementById('canvas').height;
 let cellSize = 10;
 let cellsWide = Math.floor(width / cellSize);
 let cellsHigh = Math.floor(height / cellSize);
@@ -22,7 +27,6 @@ let matrix = createMatrix(cellsWide, cellsHigh);
 let nextMatrix = createMatrix(cellsWide, cellsHigh);
 let isRunning = true;
 let iteration = 0;
-
 function createMatrix(width, height) {
   return Array(height).fill().map(() => Array(width).fill(0));
 }
@@ -89,7 +93,7 @@ function init() { // Initialize the Game of Life
 canvas.addEventListener('mousedown', toggleCell); // toggle a cell when the mouse is clicked
 
 // update the delay when the slider is moved   
-document.getElementById('delay').addEventListener('input', updateDelay);
+
 function updateDelay() { // update the delay
     delay = document.getElementById('delay').value; // get the delay from the input field
     clearInterval(gameLoop); // clear the interval
@@ -97,7 +101,6 @@ function updateDelay() { // update the delay
   }
 
 // update the width when the slider is moved
-document.getElementById('width').addEventListener('input', updateWidth);
 function updateWidth() {
     width = parseInt(document.getElementById('width').value); // get the width from the input field
     cellsWide = Math.floor(width / cellSize);
@@ -110,7 +113,6 @@ function updateWidth() {
 }
 
 // update the height when the slider is moved
-document.getElementById('height').addEventListener('input', updateHeight);
 function updateHeight() {
     height = parseInt(document.getElementById('height').value); // get the height from the input field
     cellsHigh = Math.floor(height / cellSize);
@@ -123,7 +125,6 @@ function updateHeight() {
 }   
 
 // update the cell size when the slider is moved
-document.getElementById('cellSize').addEventListener('input', updateCellSize);
 function updateCellSize() {
     cellSize = parseInt(document.getElementById('cellSize').value); // get the cell size from the input field
     canvas.width = width;
@@ -143,10 +144,6 @@ function findCentre() {
 }
 
 // draw a pattern at the centre when an option is selected  
-document.getElementById('drawPatternBtn').addEventListener('click', function() {
-    const patternName = document.getElementById('draw').value;
-    drawPattern(patternName);
-});
 function drawPattern(patternName) {
     const centre = findCentre();
     let pattern;
@@ -163,6 +160,15 @@ function drawPattern(patternName) {
         case 'gliderGun':
             pattern = GLIDERGUN;
             break;
+        case 'toad':
+            pattern = TOAD;
+            break;
+        case 'beacon':
+            pattern = BEACON;
+            break;
+        case 'pentadecathlon':
+            pattern = PENTADECATHLON;
+            break;  
         default:
             console.error('Unknown pattern:', patternName);
             return;
@@ -183,11 +189,20 @@ function drawPattern(patternName) {
     });
     paintMatrix();
 }
-document.addEventListener('keydown', (e) => { // toggle the running state when the space bar is pressed
-  if (e.code === 'Space') {
+
+// clear the matrix when the clear button is clicked    
+function clear() {
+    matrix = createMatrix(cellsWide, cellsHigh);
+    nextMatrix = createMatrix(cellsWide, cellsHigh);
+    iteration = 0;
+    paintMatrix();
+}
+
+function togglePauseResume() {
     isRunning = !isRunning;
-  }
-});
+    const pauseResumeBtn = document.getElementById('pauseResumeBtn');
+    pauseResumeBtn.textContent = isRunning ? 'Pause' : 'Resume';
+}
 
 document.addEventListener('DOMContentLoaded', function() {
   init();
