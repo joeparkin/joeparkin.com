@@ -1,12 +1,64 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 	<head>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: space-between;
+            }
+            #game-container {
+                flex: 1;
+            }
+            #options-container {
+                width: 250px;
+                padding: 10px;
+            }
+        </style>
 	</head>
     <body>
-        <div>
-            Delay (ms): <input type="number" id="delay" value="100" min="10" max="1000">
-            <button id="update">Update</button>
+        <div id="game-container">
+            <canvas id="canvas" width="800" height="800"></canvas>
         </div>
-        <canvas id="canvas" width="800" height="800"></canvas>
-        <script src="js/gol.js"></script>
+        <div id="options-container">
+            Delay: <span id="delayValue">100</span> ms <input type="range" id="delay" value="100" min="10" max="1000" step="10"> <br>
+            Width: <span id="widthValue">800</span> px <input type="range" id="width" value="800" min="100" max="2000" step="10"> <br>
+            Height: <span id="heightValue">800</span> px <input type="range" id="height" value="800" min="100" max="1000" step="10"> <br>
+            Cell Size: <span id="cellSizeValue">10</span> px <input type="range" id="cellSize" value="10" min="5" max="50" step="5"> <br>
+            Draw: 
+            <select id="draw">
+                <option value="glider">Glider</option>
+                <option value="rpentomino">R-Pentomino</option>
+                <option value="spaceship">Spaceship</option>
+                <option value="gliderGun">Glider Gun</option>
+            </select>
+            <button id="drawPatternBtn">Draw Pattern</button> <br>
+        </div>
+        <!-- Game of Life Code -->
+        <script src="js/gol.js"></script> 
+        <!-- Slider code -->
+        <script>
+            const delaySlider = document.getElementById('delay');
+            const delayValue = document.getElementById('delayValue');
+            delaySlider.oninput = function() {
+                delayValue.textContent = this.value;
+            }
+            const widthSlider = document.getElementById('width');
+            const widthValue = document.getElementById('widthValue');
+            widthSlider.oninput = function() {
+                widthValue.textContent = this.value;
+            }
+            const heightSlider = document.getElementById('height');
+            const heightValue = document.getElementById('heightValue');
+            heightSlider.oninput = function() {
+                heightValue.textContent = this.value;
+            }
+            const cellSizeSlider = document.getElementById('cellSize');
+            const cellSizeValue = document.getElementById('cellSizeValue');
+            cellSizeSlider.oninput = function() {
+                cellSizeValue.textContent = this.value;
+            }
+        </script>
     </body>
 </html>

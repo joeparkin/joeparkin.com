@@ -2,13 +2,22 @@ const CELL_SIZE = 10;
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-const width = canvas.width;
-const height = canvas.height;
-
-const cellsWide = Math.floor(width / CELL_SIZE);
-const cellsHigh = Math.floor(height / CELL_SIZE);
+const GLIDER = [[0, 0], [1, 0], [2, 0], [2, 1], [1, 2]];
+const RPENTOMINO = [[1, 0], [2, 0], [0, 1], [1, 1], [1, 2]];
+const SPACESHIP = [[1, 0], [4, 0], [0, 1], [0, 2], [4, 2], [0, 3], [1, 3], [2, 3], [3, 3]];
+const GLIDERGUN = [
+  [24, 0], [22, 1], [24, 1], [12, 2], [13, 2], [20, 2], [21, 2], [34, 2], [35, 2], 
+  [11, 3], [15, 3], [20, 3], [21, 3], [34, 3], [35, 3], [0, 4], [1, 4], [10, 4], 
+  [16, 4], [20, 4], [21, 4], [0, 5], [1, 5], [10, 5], [14, 5], [16, 5], [17, 5], 
+  [22, 5], [24, 5], [10, 6], [16, 6], [24, 6], [11, 7], [15, 7], [12, 8], [13, 8]
+];
 
 let delay = 100;
+let width = 800;
+let height = 800;
+let cellSize = 10;
+let cellsWide = Math.floor(width / cellSize);
+let cellsHigh = Math.floor(height / cellSize);
 let matrix = createMatrix(cellsWide, cellsHigh);
 let nextMatrix = createMatrix(cellsWide, cellsHigh);
 let isRunning = true;
@@ -18,24 +27,19 @@ function createMatrix(width, height) {
   return Array(height).fill().map(() => Array(width).fill(0));
 }
 
-function drawGlider() {
-  const glider = [[0, 0], [1, 0], [2, 0], [2, 1], [1, 2]];
-  glider.forEach(([x, y]) => matrix[y][x] = 1);
-}
-
 function toggleCell(event) {
   const rect = canvas.getBoundingClientRect();
-  const x = Math.floor((event.clientX - rect.left) / CELL_SIZE);
-  const y = Math.floor((event.clientY - rect.top) / CELL_SIZE);
+  const x = Math.floor((event.clientX - rect.left) / cellSize);
+  const y = Math.floor((event.clientY - rect.top) / cellSize);
   matrix[y][x] = 1 - matrix[y][x];
   paintCell(x, y, matrix[y][x]);
 }
 
 function paintCell(x, y, alive) { // paint a cell   
   ctx.fillStyle = alive ? 'black' : 'white';
-  ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
   ctx.strokeStyle = 'rgba(200, 200, 200, 0.5)';  // Light gray with 50% opacity for the cell border
-  ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
 }
 
 function paintMatrix() { // paint the matrix    
@@ -78,25 +82,113 @@ function update() { // update the matrix
 }
 
 function init() { // Initialize the Game of Life    
-  drawGlider(); // draw a glider
   paintMatrix(); // paint the matrix
   gameLoop = setInterval(update, delay); // update the matrix at regular intervals
 }
 
-function updateDelay() { // update the delay
-  delay = document.getElementById('delay').value; // get the delay from the input field
-  clearInterval(gameLoop); // clear the interval
-  gameLoop = setInterval(update, delay); // set the interval
-}   
-
 canvas.addEventListener('mousedown', toggleCell); // toggle a cell when the mouse is clicked
 
+// update the delay when the slider is moved   
 document.getElementById('delay').addEventListener('input', updateDelay);
+function updateDelay() { // update the delay
+    delay = document.getElementById('delay').value; // get the delay from the input field
+    clearInterval(gameLoop); // clear the interval
+    gameLoop = setInterval(update, delay); // set the interval
+  }
 
+// update the width when the slider is moved
+document.getElementById('width').addEventListener('input', updateWidth);
+function updateWidth() {
+    width = parseInt(document.getElementById('width').value); // get the width from the input field
+    cellsWide = Math.floor(width / cellSize);
+    canvas.width = width;
+    matrix = createMatrix(cellsWide, cellsHigh);
+    nextMatrix = createMatrix(cellsWide, cellsHigh);
+    clearInterval(gameLoop);
+    paintMatrix();
+    gameLoop = setInterval(update, delay);
+}
+
+// update the height when the slider is moved
+document.getElementById('height').addEventListener('input', updateHeight);
+function updateHeight() {
+    height = parseInt(document.getElementById('height').value); // get the height from the input field
+    cellsHigh = Math.floor(height / cellSize);
+    canvas.height = height;
+    matrix = createMatrix(cellsWide, cellsHigh);
+    nextMatrix = createMatrix(cellsWide, cellsHigh);
+    clearInterval(gameLoop);    
+    paintMatrix();
+    gameLoop = setInterval(update, delay);
+}   
+
+// update the cell size when the slider is moved
+document.getElementById('cellSize').addEventListener('input', updateCellSize);
+function updateCellSize() {
+    cellSize = parseInt(document.getElementById('cellSize').value); // get the cell size from the input field
+    canvas.width = width;
+    canvas.height = height;
+    matrix = createMatrix(cellsWide, cellsHigh);
+    nextMatrix = createMatrix(cellsWide, cellsHigh);
+    clearInterval(gameLoop);
+    paintMatrix();
+    gameLoop = setInterval(update, delay);
+}
+
+// find the centre of the matrix    
+function findCentre() { 
+    let centreX = Math.floor(cellsWide / 2);
+    let centreY = Math.floor(cellsHigh / 2);
+    return [centreX, centreY];
+}
+
+// draw a pattern at the centre when an option is selected  
+document.getElementById('drawPatternBtn').addEventListener('click', function() {
+    const patternName = document.getElementById('draw').value;
+    drawPattern(patternName);
+});
+function drawPattern(patternName) {
+    const centre = findCentre();
+    let pattern;
+    switch (patternName) {
+        case 'glider':
+            pattern = GLIDER;
+            break;
+        case 'rpentomino':
+            pattern = RPENTOMINO;
+            break;
+        case 'spaceship':
+            pattern = SPACESHIP;
+            break;
+        case 'gliderGun':
+            pattern = GLIDERGUN;
+            break;
+        default:
+            console.error('Unknown pattern:', patternName);
+            return;
+    }
+    // Find the dimensions of the pattern
+    const patternWidth = Math.max(...pattern.map(([x, _]) => x)) + 1;
+    const patternHeight = Math.max(...pattern.map(([_, y]) => y)) + 1;
+    // Calculate the offset to center the pattern
+    const offsetX = Math.floor(centre[0] - patternWidth / 2);
+    const offsetY = Math.floor(centre[1] - patternHeight / 2);
+
+    pattern.forEach(([x, y]) => {
+        const newX = x + offsetX;
+        const newY = y + offsetY;
+        if (newX >= 0 && newX < cellsWide && newY >= 0 && newY < cellsHigh) {
+            matrix[newY][newX] = 1;
+        }
+    });
+    paintMatrix();
+}
 document.addEventListener('keydown', (e) => { // toggle the running state when the space bar is pressed
   if (e.code === 'Space') {
     isRunning = !isRunning;
   }
 });
 
-init();
+document.addEventListener('DOMContentLoaded', function() {
+  init();
+});
