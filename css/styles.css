@@ -28,7 +28,7 @@ header {
 h1 {
     font-size: 2.5em;
     margin: 0;
-    margin-left: 100px;
+    margin-left: 10px;
 }
 main {
     display: flex;
@@ -61,10 +61,46 @@ nav a:hover {
     line-height: 1.6;
 }
 @media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    h1 {
+        margin-left: 0;
+        margin-top: 20px;
+    }
+
     main {
         flex-direction: column;
     }
+
     nav {
         width: 100%;
+        order: -1;
+    }
+
+    nav ul {
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+    }
+
+    nav li {
+        margin-bottom: 0;
+    }
+
+    #content {
+        padding: 20px;
+    }
+
+    #canvas {
+        max-width: 100%;
+        height: auto;
     }
 }
