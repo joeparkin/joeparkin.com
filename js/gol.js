@@ -1,5 +1,6 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+
 const GLIDER = [[0, 0], [1, 0], [2, 0], [2, 1], [1, 2]];
 const RPENTOMINO = [[1, 0], [2, 0], [0, 1], [1, 1], [1, 2]];
 const SPACESHIP = [[1, 0], [4, 0], [0, 1], [0, 2], [4, 2], [0, 3], [1, 3], [2, 3], [3, 3]];
@@ -12,7 +13,8 @@ const GLIDERGUN = [[24, 0], [22, 1], [24, 1], [12, 2], [13, 2], [20, 2], [21, 2]
 const PENTADECATHLON = [[2,0],[7,0],
   [0,1],[1,1],[3,1],[4,1],[5,1],[6,1],[8,1],[9,1],
   [2,2],[7,2]];
-let delay = 100;
+
+let delay = 500;
 let width = document.getElementById('canvas').width;
 let height = document.getElementById('canvas').height;
 let cellSize = 10;
@@ -22,6 +24,7 @@ let matrix = createMatrix(cellsWide, cellsHigh);
 let nextMatrix = createMatrix(cellsWide, cellsHigh);
 let isRunning = true;
 let iteration = 0;
+
 function createMatrix(width, height) {
   return Array(height).fill().map(() => Array(width).fill(0));
 }
@@ -85,7 +88,6 @@ function init() { // Initialize the Game of Life
   gameLoop = setInterval(update, delay); // update the matrix at regular intervals
   canvas.addEventListener('mousedown', toggleCell); // toggle a cell when the mouse is clicked
 }
-
 
 // update the delay when the slider is moved   
 function updateDelay() { // update the delay
