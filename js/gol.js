@@ -24,6 +24,8 @@ let matrix = createMatrix(cellsWide, cellsHigh);
 let nextMatrix = createMatrix(cellsWide, cellsHigh);
 let isRunning = true;
 let iteration = 0;
+let isDrawing = false;
+let initialCellState = 0;
 
 function createMatrix(width, height) {
   return Array(height).fill().map(() => Array(width).fill(0));
@@ -86,7 +88,22 @@ function update() { // update the matrix
 function init() { // Initialize the Game of Life    
   paintMatrix(); // paint the matrix
   gameLoop = setInterval(update, delay); // update the matrix at regular intervals
-  canvas.addEventListener('mousedown', toggleCell); // toggle a cell when the mouse is clicked
+  canvas.addEventListener('mousedown', startDrawing);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', stopDrawing);
+  canvas.addEventListener('mouseleave', stopDrawing);
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    startDrawing(touch);
+  });
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    draw(touch);
+  });
+  canvas.addEventListener('touchend', stopDrawing);
+  canvas.addEventListener('touchcancel', stopDrawing);
 }
 
 // update the delay when the slider is moved   
@@ -200,6 +217,33 @@ function togglePauseResume() {
     isRunning = !isRunning;
     const pauseResumeBtn = document.getElementById('pauseResumeBtn');
     pauseResumeBtn.textContent = isRunning ? 'Pause' : 'Resume';
+}
+
+function startDrawing(event) {
+    isDrawing = true;
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor((event.clientX - rect.left) / cellSize);
+    const y = Math.floor((event.clientY - rect.top) / cellSize);
+    // Remember the initial state - we'll toggle to the opposite
+    initialCellState = matrix[y][x];
+    toggleCell(event);
+}
+
+function stopDrawing() {
+    isDrawing = false;
+}
+
+function draw(event) {
+    if (!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor((event.clientX - rect.left) / cellSize);
+    const y = Math.floor((event.clientY - rect.top) / cellSize);
+    
+    // Only update if within bounds and cell is in initial state
+    if (x >= 0 && x < cellsWide && y >= 0 && y < cellsHigh && matrix[y][x] === initialCellState) {
+        matrix[y][x] = 1 - initialCellState;
+        paintCell(x, y, matrix[y][x]);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
