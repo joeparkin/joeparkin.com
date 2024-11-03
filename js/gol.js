@@ -25,7 +25,7 @@ let nextMatrix = createMatrix(cellsWide, cellsHigh);
 let isRunning = true;
 let iteration = 0;
 let isDrawing = false;
-let initialCellState = 0;
+let drawingState = 1; // 1 for alive, 0 for dead
 
 function createMatrix(width, height) {
   return Array(height).fill().map(() => Array(width).fill(0));
@@ -88,20 +88,14 @@ function update() { // update the matrix
 function init() { // Initialize the Game of Life    
   paintMatrix(); // paint the matrix
   gameLoop = setInterval(update, delay); // update the matrix at regular intervals
+  // Unified mouse events
   canvas.addEventListener('mousedown', startDrawing);
   canvas.addEventListener('mousemove', draw);
   canvas.addEventListener('mouseup', stopDrawing);
   canvas.addEventListener('mouseleave', stopDrawing);
-  canvas.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    startDrawing(touch);
-  });
-  canvas.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    draw(touch);
-  });
+  // Unified touch events
+  canvas.addEventListener('touchstart', startDrawing);
+  canvas.addEventListener('touchmove', draw);
   canvas.addEventListener('touchend', stopDrawing);
   canvas.addEventListener('touchcancel', stopDrawing);
 }
@@ -219,31 +213,39 @@ function togglePauseResume() {
     pauseResumeBtn.textContent = isRunning ? 'Pause' : 'Resume';
 }
 
+// Unified event handlers for both mouse and touch events
+function getEventPosition(event) {
+  const rect = canvas.getBoundingClientRect();
+  const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+  const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+  const x = Math.floor((clientX - rect.left) / cellSize);
+  const y = Math.floor((clientY - rect.top) / cellSize);
+  return { x, y };
+}
+
 function startDrawing(event) {
+  event.preventDefault();
+  const { x, y } = getEventPosition(event);
+  if (x >= 0 && x < cellsWide && y >= 0 && y < cellsHigh) {
+    drawingState = matrix[y][x] === 1 ? 0 : 1;
+    matrix[y][x] = drawingState;
+    paintCell(x, y, drawingState);
     isDrawing = true;
-    const rect = canvas.getBoundingClientRect();
-    const x = Math.floor((event.clientX - rect.left) / cellSize);
-    const y = Math.floor((event.clientY - rect.top) / cellSize);
-    // Remember the initial state - we'll toggle to the opposite
-    initialCellState = matrix[y][x];
-    toggleCell(event);
+  }
 }
 
 function stopDrawing() {
-    isDrawing = false;
+  isDrawing = false;
 }
 
 function draw(event) {
-    if (!isDrawing) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = Math.floor((event.clientX - rect.left) / cellSize);
-    const y = Math.floor((event.clientY - rect.top) / cellSize);
-    
-    // Only update if within bounds and cell is in initial state
-    if (x >= 0 && x < cellsWide && y >= 0 && y < cellsHigh && matrix[y][x] === initialCellState) {
-        matrix[y][x] = 1 - initialCellState;
-        paintCell(x, y, matrix[y][x]);
-    }
+  if (!isDrawing) return;
+  event.preventDefault();
+  const { x, y } = getEventPosition(event);
+  if (x >= 0 && x < cellsWide && y >= 0 && y < cellsHigh && matrix[y][x] !== drawingState) {
+    matrix[y][x] = drawingState;
+    paintCell(x, y, drawingState);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
