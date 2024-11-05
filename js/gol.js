@@ -1,11 +1,16 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-const GLIDER = [[0, 0], [1, 0], [2, 0], [2, 1], [1, 2]];
+const GLIDER = [[0, 2], [1, 2], [2, 2], [2, 1], [1, 0]];
 const RPENTOMINO = [[1, 0], [2, 0], [0, 1], [1, 1], [1, 2]];
 const SPACESHIP = [[1, 0], [4, 0], [0, 1], [0, 2], [4, 2], [0, 3], [1, 3], [2, 3], [3, 3]];
 const TOAD = [[1, 0], [1, 1], [1, 2], [2, 1], [2, 2], [2, 3]];
 const BEACON = [[0, 0], [0, 1], [1, 0], [2, 3], [3, 2], [3, 3]];
+const SMILEY = [[0,0],[1,0],[2,0],[4,0],[5,0],[6,0],
+  [1,1],[3,1],[5,1],
+  [1,3],[5,3],
+  [0,5],[2,5],[4,5],[6,5],
+  [2,6],[4,6]];
 const GLIDERGUN = [[24, 0], [22, 1], [24, 1], [12, 2], [13, 2], [20, 2], [21, 2], [34, 2], [35, 2], 
   [11, 3], [15, 3], [20, 3], [21, 3], [34, 3], [35, 3], [0, 4], [1, 4], [10, 4], 
   [16, 4], [20, 4], [21, 4], [0, 5], [1, 5], [10, 5], [14, 5], [16, 5], [17, 5], 
@@ -13,7 +18,6 @@ const GLIDERGUN = [[24, 0], [22, 1], [24, 1], [12, 2], [13, 2], [20, 2], [21, 2]
 const PENTADECATHLON = [[2,0],[7,0],
   [0,1],[1,1],[3,1],[4,1],[5,1],[6,1],[8,1],[9,1],
   [2,2],[7,2]];
-
 let delay = 500;
 let width = document.getElementById('canvas').width;
 let height = document.getElementById('canvas').height;
@@ -166,6 +170,9 @@ function drawPattern(patternName) {
         case 'spaceship':
             pattern = SPACESHIP;
             break;
+        case 'smiley':
+            pattern = SMILEY;
+            break;
         case 'gliderGun':
             pattern = GLIDERGUN;
             break;
@@ -183,8 +190,8 @@ function drawPattern(patternName) {
             return;
     }
     // Find the dimensions of the pattern
-    const patternWidth = Math.max(...pattern.map(([x, _]) => x)) + 1;
-    const patternHeight = Math.max(...pattern.map(([_, y]) => y)) + 1;
+    const patternWidth = Math.max(...pattern.map(([x, _]) => x));
+    const patternHeight = Math.max(...pattern.map(([_, y]) => y));
     // Calculate the offset to center the pattern
     const offsetX = Math.floor(centre[0] - patternWidth / 2);
     const offsetY = Math.floor(centre[1] - patternHeight / 2);
