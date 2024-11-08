@@ -1,0 +1,66 @@
+#game-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+#game-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(10, 30px);
+    gap: 2px;
+    background-color: #ccc;
+    padding: 2px;
+}
+
+.game-tile {
+    background-color: #fff;
+    border: 1px solid #999;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-family: monospace;
+}
+
+.game-tile.revealed {
+    background-color: #e3f2fd;
+    color: #2196F3;
+}
+
+.game-tile:hover {
+    background-color: #eee;
+}
+
+#regex-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#regex-input {
+    padding: 8px 12px;
+    font-size: 16px;
+    width: 250px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+#test-regex {
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100px;
+}
+
+#test-regex:hover {
+    background-color: #45a049;
+}

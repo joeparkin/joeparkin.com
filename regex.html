@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Joe Parkin</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/regex.css">
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 </head>
 <body>
@@ -22,15 +23,23 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="contact.html">Contact</a></li>
+                <li><a href="regex.html">Regex Sweeper</a></li>
                 <li><a href="gol.html">Game of Life</a></li>
             </ul>
         </nav>
         <div id="content">
-            <h2>Welcome</h2>
-            <p>I like to build things. I work in detection engineering and dabble in making AI do interesting stuff.</p>
+            <h2>Regex Sweeper</h2>
+            <div id="regex-input-container">
+                <input type="text" id="regex-input" placeholder="Enter your regex...">
+                <button id="test-regex">Test</button>
+            </div>
+            <div id="game-container">
+                <div id="game-grid"></div>
+            </div>
+
         </div>
     </main>
-
+    <script src="js/regex.js"></script> 
     <script src="js/gol.js"></script> 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
